@@ -1,0 +1,28 @@
+name: Save to Nextcloud
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  save-to-nextcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Archive source code
+      run: |
+        zip -r source_code.zip .
+      working-directory: ${{ github.workspace }}
+
+    - name: Save to Nextcloud
+      uses: ncw/nextcloud-client@v3
+      with:
+        url: ${{ secrets.NEXTCLOUD_URL }}
+        user: ${{ secrets.NEXTCLOUD_USER }}
+        password: ${{ secrets.NEXTCLOUD_PASSWORD }}
+        local: source_code.zip
+        remote: /Чертежи/source_code.zip
