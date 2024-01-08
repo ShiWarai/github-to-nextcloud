@@ -19,10 +19,8 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Save to Nextcloud
-      uses: ncw/nextcloud-client@v3
+      uses: bumbummen99/nextcloud-uploader
       with:
+        type: wget
         url: ${{ secrets.NEXTCLOUD_URL }}
-        user: ${{ secrets.NEXTCLOUD_USER }}
-        password: ${{ secrets.NEXTCLOUD_PASSWORD }}
-        local: source_code.zip
-        remote: /Чертежи/source_code.zip
+        extract-audio: false
