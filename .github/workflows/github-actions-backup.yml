@@ -1,26 +1,107 @@
-name: Save to Nextcloud
+name: Upload to Nextcloud
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type'
+        required: true
+        default: 'wget'
+        type: choice
+        options:
+        - wget
+        - youtube-dl
+      extract-audio:
+        description: 'Extract mp3? (YouTube-DL only!)'
+        required: true
+        type: boolean
+        default: true
+      url:
+        description: 'URL that should be uploaded to NextCloud'
+        required: true
+        type: string
 
 jobs:
-  save-to-nextcloud:
+  wget:
     runs-on: ubuntu-latest
-
+    if: inputs.type == 'wget'
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Archive source code
-      run: |
-        zip -r source_code.zip .
-      working-directory: ${{ github.workspace }}
-
-    - name: Save to Nextcloud
-      uses: bumbummen99/nextcloud-uploader@master
+    -
+      name: Create output directory
+      run: mkdir output
+    -
+      name: Download file
+      run: wget -P ./output ${{ inputs.url }}
+    -
+      name: Compress downloaded files
+      run: tar -zcvf output.tar.gz output
+    -
+      uses: actions/upload-artifact@v2
       with:
-        type: wget
-        url: ${{ secrets.NEXTCLOUD_URL }}
-        extract-audio: false
+        name: output
+        path: output.tar.gz
+  youtube-dl:
+    runs-on: ubuntu-latest
+    if: inputs.type == 'youtube-dl'
+    steps:
+    -
+      name: Setup YouTube-DL(P)
+      run: |
+           wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/youtube-dl
+           chmod +x /usr/local/bin/youtube-dl
+    -
+      uses: FedericoCarboni/setup-ffmpeg@v2
+      if: inputs.extract-audio == true
+      id: setup-ffmpeg
+    -
+      name: Download Video/Audio
+      run: |
+        mkdir output
+        cd output
+        if [[ "${{ inputs.extract-audio }}" == true ]]; then
+          youtube-dl --extract-audio --audio-format mp3 ${{ inputs.url }}
+        else
+          youtube-dl ${{ inputs.url }}
+        fi
+    -
+      name: Show files
+      run: ls -l output
+    -
+      name: Compress downloaded files
+      run: tar -zcvf output.tar.gz output
+    -
+      uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: output.tar.gz
+  upload:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [wget, youtube-dl]
+    steps:
+    -
+      uses: actions/download-artifact@v3
+      with:
+        name: output
+    -
+      name: Decompress artifact
+      run: tar -xvf output.tar.gz
+    -
+      name: Show files
+      run: ls -l output
+    -
+      name: Upload files
+      run: |
+        for FILE in output/*
+        do
+          echo "Uploading file: $FILE"
+          curl \
+            -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} \
+            -T "$FILE" \
+            -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/Чертежи/
+        done
+    -
+      uses: geekyeggo/delete-artifact@v2
+      if: always()
+      with:
+          name: output
