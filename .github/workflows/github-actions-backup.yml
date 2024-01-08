@@ -19,7 +19,7 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Save to Nextcloud
-      uses: bumbummen99/nextcloud-uploader
+      uses: bumbummen99/nextcloud-uploader@master
       with:
         type: wget
         url: ${{ secrets.NEXTCLOUD_URL }}
