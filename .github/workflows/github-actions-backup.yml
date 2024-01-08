@@ -3,7 +3,7 @@ name: Save to Nextcloud
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   save-to-nextcloud:
