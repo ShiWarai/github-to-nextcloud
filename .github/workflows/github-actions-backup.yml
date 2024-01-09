@@ -23,7 +23,11 @@ jobs:
           curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T ${{ github.sha }}.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ vars.NEXTCLOUD_PATH }}/${{ github.sha }}.zip
       working-directory: ${{ github.workspace }}
 
-    - uses: geekyeggo/delete-artifact@v4
-      if: always()
-      with:
-          name: output
+    - name: Removing data
+      run: rm ${{ github.sha }}.zip
+      working-directory: ${{ github.workspace }}
+
+#    - uses: geekyeggo/delete-artifact@v4
+#      if: always()
+#      with:
+#          name: output
