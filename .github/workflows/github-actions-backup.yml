@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Archive source code
       run: |
@@ -20,8 +20,8 @@ jobs:
 
     - name: Upload files
       run: |
-          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T source_code.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ inputs.url }}/source_code.zip
-    - uses: geekyeggo/delete-artifact@v2
+          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T source_code.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/Чертежи/source_code.zip
+    - uses: actions/delete-artifact@v2
       if: always()
       with:
           name: output
