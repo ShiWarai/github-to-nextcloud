@@ -1,1 +1,1 @@
-#️ github-to-nextcloud
+# github-to-nextcloud
