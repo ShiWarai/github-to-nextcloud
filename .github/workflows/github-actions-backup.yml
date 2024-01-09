@@ -3,7 +3,7 @@ name: Backup to Nextcloud
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   save-to-nextcloud:
