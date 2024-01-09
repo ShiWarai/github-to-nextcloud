@@ -21,5 +21,5 @@ jobs:
     - name: Upload files
       uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: Upload to Nextcloud
+        workflow: github-actions-nextcloud.yml
         inputs: '{ "url": "Чертежи" }'
