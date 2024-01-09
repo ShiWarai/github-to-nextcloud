@@ -13,21 +13,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-#    - name: Archive source code
-#      run: |
-#        zip -r source_code.zip .
-#      working-directory: ${{ github.workspace }}
+    - name: Archive source code
+      run: |
+        zip -r ${{ GITHUB_SHA }}.zip .
+      working-directory: ${{ github.workspace }}
 
     - name: Upload files
       run: |
-        for FILE in *
-        do
-          echo "Uploading file: $FILE"
-            curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T "$FILE" -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/Чертежи/"$FILE"
-        done
-      working-directory: ${{ github.workspace }}
+          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T source_code.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/Чертежи/${{ $GITHUB_SHA }}.zip
 
-    - uses: geekyeggo/delete-artifact@v2
+    - uses: geekyeggo/delete-artifact@v4
       if: always()
       with:
           name: output
