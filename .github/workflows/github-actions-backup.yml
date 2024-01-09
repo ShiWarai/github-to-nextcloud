@@ -19,7 +19,13 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Upload files
-      uses: benc-uk/workflow-dispatch@v1
+      run: |
+          curl \
+            -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} \
+            -T source_code.zip \
+            -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ inputs.url }}/
+
+    - uses: geekyeggo/delete-artifact@v2
+      if: always()
       with:
-        workflow: github-actions-nextcloud.yml
-        inputs: '{ "url": "Чертежи" }'
+          name: output
