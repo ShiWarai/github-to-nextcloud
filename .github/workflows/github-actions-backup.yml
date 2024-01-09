@@ -21,7 +21,7 @@ jobs:
     - name: Upload files
       run: |
           curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T source_code.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/Чертежи/source_code.zip
-    - uses: actions/delete-artifact@v2
+    - uses: geekyeggo/delete-artifact@v2
       if: always()
       with:
           name: output
