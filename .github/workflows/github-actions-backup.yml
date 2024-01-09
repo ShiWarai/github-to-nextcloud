@@ -3,7 +3,7 @@ name: Backup to Nextcloud
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   save-to-nextcloud:
@@ -26,8 +26,3 @@ jobs:
     - name: Removing data
       run: rm ${{ github.sha }}.zip
       working-directory: ${{ github.workspace }}
-
-#    - uses: geekyeggo/delete-artifact@v4
-#      if: always()
-#      with:
-#          name: output
