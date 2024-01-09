@@ -15,12 +15,12 @@ jobs:
 
     - name: Archive source code
       run: |
-        tar --exclude=".git" -czf ${{ github.sha }}.tar.gz .
+        zip -r ${{ github.sha }}.zip . -x '*.git*'
       working-directory: ${{ github.workspace }}
 
     - name: Upload files
       run: |
-          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T ${{ github.sha }}.tar.gz -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ vars.NEXTCLOUD_PATH }}/${{ github.sha }}.tar.gz
+          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T ${{ github.sha }}.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ vars.NEXTCLOUD_PATH }}/${{ github.sha }}.zip
       working-directory: ${{ github.workspace }}
 
     - name: Removing data
