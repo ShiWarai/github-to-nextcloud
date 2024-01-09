@@ -1,0 +1,28 @@
+name: Backup to Nextcloud
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  save-to-nextcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Archive source code
+      run: |
+        zip -r ${{ github.sha }}.zip .
+      working-directory: ${{ github.workspace }}
+
+    - name: Upload files
+      run: |
+          curl -X PUT -u ${{ secrets.NEXTCLOUD_USERNAME }}:${{ secrets.NEXTCLOUD_PASSWORD }} -T ${{ github.sha }}.zip -g ${{ secrets.NEXTCLOUD_URL }}/remote.php/dav/files/${{ secrets.NEXTCLOUD_USERNAME }}/${{ vars.NEXTCLOUD_PATH }}/${{ github.sha }}.zip
+      working-directory: ${{ github.workspace }}
+
+    - name: Removing data
+      run: rm ${{ github.sha }}.zip
+      working-directory: ${{ github.workspace }}
