@@ -15,7 +15,7 @@ jobs:
 
     - name: Archive source code
       run: |
-        zip -r ${{ github.sha }}.zip .
+        zip -r ${{ github.sha }}.zip * -x "*.git*"
       working-directory: ${{ github.workspace }}
 
     - name: Upload files
